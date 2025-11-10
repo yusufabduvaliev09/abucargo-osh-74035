@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, UserPlus, Upload, Edit, Trash2, UserCog } from "lucide-react";
+import { Search, UserPlus, Upload, Edit, Trash2, UserCog, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { EditUserDialog } from "@/components/EditUserDialog";
 import { AddUserDialog } from "@/components/AddUserDialog";
@@ -355,7 +355,18 @@ const AdminUsers = () => {
                         <TableCell>{user.phone}</TableCell>
                         <TableCell>{getPvzLabel(user.pvz_location)}</TableCell>
                         <TableCell>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-wrap">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const cleanPhone = user.phone.replace(/[^0-9]/g, '');
+                                window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                              }}
+                            >
+                              <MessageCircle className="h-4 w-4 mr-2" />
+                              WhatsApp
+                            </Button>
                             <Button
                               variant="outline"
                               size="sm"
