@@ -25,14 +25,37 @@ const Login = () => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/dashboard");
+        // Проверяем роль пользователя
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        if (roleData?.role === 'admin') {
+          navigate("/admin/users");
+        } else {
+          navigate("/dashboard");
+        }
       }
     };
     checkUser();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        navigate("/dashboard");
+        setTimeout(async () => {
+          const { data: roleData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+
+          if (roleData?.role === 'admin') {
+            navigate("/admin/users");
+          } else {
+            navigate("/dashboard");
+          }
+        }, 0);
       }
     });
 
@@ -58,7 +81,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const cleanPhone = phone.replace(/[^0-9]/g, "");
+      const cleanPhone = phone.replace(/[^0-9+]/g, "");
       const email = `${cleanPhone}@abucargo.app`;
 
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -70,13 +93,27 @@ const Login = () => {
         toast({
           variant: "destructive",
           title: "Ошибка входа",
-          description: "Неверный номер телефона или пароль",
+          description: "Неверный номер или пароль",
         });
       } else if (data.user) {
+        // Проверяем роль пользователя
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', data.user.id)
+          .maybeSingle();
+
         toast({
           title: "Успешный вход",
           description: "Добро пожаловать!",
         });
+
+        // Редирект в зависимости от роли
+        if (roleData?.role === 'admin') {
+          navigate("/admin/users");
+        } else {
+          navigate("/dashboard");
+        }
       }
     } catch (error: any) {
       toast({

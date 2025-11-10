@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
     const { data: existingProfile } = await supabaseAdmin
       .from('profiles')
       .select('user_id')
-      .eq('phone', '+996558105551')
+      .eq('client_code', '+996558105551')
       .maybeSingle()
 
     if (existingProfile) {
@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
 
     // Create admin user
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email: '996558105551@admin.local',
+      email: '+996558105551@abucargo.app',
       phone: '+996558105551',
       password: 'admin123',
       email_confirm: true,

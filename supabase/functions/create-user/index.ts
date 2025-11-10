@@ -85,8 +85,9 @@ serve(async (req) => {
       )
     }
 
-    // Создаем email из client_code
-    const email = `${client_code.toLowerCase()}@abucargo.app`
+    // Создаем email из номера телефона
+    const cleanPhone = phone.replace(/[^0-9+]/g, "");
+    const email = `${cleanPhone}@abucargo.app`
 
     // Создаем пользователя с указанным паролем
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
