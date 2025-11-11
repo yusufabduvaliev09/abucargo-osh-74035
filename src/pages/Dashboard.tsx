@@ -107,7 +107,7 @@ const Dashboard = () => {
     const prefix = profile.client_code.substring(0, 2);
     const companyName = prefix === "YX" ? "御玺" : prefix === "YQ" ? "优祺" : "佳联";
     
-    return `${companyName}${profile.client_code}\n15727306315\n浙江省金华市义乌市北苑街道春晗二区36栋好运国际货运5697库\n入仓号:${companyName}${profile.client_code}`;
+    return `${companyName}${profile.client_code}\n15727306315\n浙江省金华市义乌市北苑街道春晗四区59栋佑途国际797库\n入库号:${companyName}${profile.client_code}`;
   };
 
   const copyAddress = async () => {
