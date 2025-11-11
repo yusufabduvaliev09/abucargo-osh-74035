@@ -113,6 +113,11 @@ const AdminUsers = () => {
 
       for (const row of jsonData as any[]) {
         // Поддержка русских и английских заголовков
+        const clientCode = (
+          row['ID'] || row['Код'] || row['Код_пользователя'] || 
+          row['id'] || row['Id']
+        )?.toString().trim();
+        
         const fullName = (
           row['Имя'] || row['ФИО'] || 
           row['Name'] || row['FullName']
@@ -128,25 +133,26 @@ const AdminUsers = () => {
           row['Password'] || row['Pwd']
         )?.toString().trim();
 
-        // Определяем ПВЗ из колонки или по умолчанию
-        let pvzLocation = (
-          row['ПВЗ'] || row['PVZ'] || row['Пункт']
-        )?.toString().trim().toLowerCase();
-
-        // Если ПВЗ не указан, используем nariman по умолчанию
-        if (!pvzLocation || !['nariman', 'zhiydalik', 'dostuk'].includes(pvzLocation)) {
-          pvzLocation = 'nariman';
+        if (!clientCode || !fullName || !phone || !password) {
+          errorCount++;
+          errors.push(`Строка пропущена: отсутствуют обязательные поля`);
+          continue;
         }
 
-        if (!fullName || !phone || !password) {
+        const pvzLocation = clientCode.startsWith('YQ') ? 'nariman' :
+                          clientCode.startsWith('YX') ? 'zhiydalik' :
+                          clientCode.startsWith('JL') ? 'dostuk' : null;
+
+        if (!pvzLocation) {
           errorCount++;
-          errors.push(`Строка пропущена: отсутствуют обязательные поля (имя, телефон, пароль)`);
+          errors.push(`${clientCode}: ID должен начинаться с YQ, YX или JL`);
           continue;
         }
 
         try {
           const { data, error } = await supabase.functions.invoke('create-user', {
             body: {
+              client_code: clientCode,
               full_name: fullName,
               phone: phone,
               pvz_location: pvzLocation,
@@ -156,13 +162,13 @@ const AdminUsers = () => {
 
           if (error || data?.error) {
             errorCount++;
-            errors.push(`${fullName}: ${error?.message || data?.error}`);
+            errors.push(`${clientCode}: ${error?.message || data?.error}`);
           } else {
             successCount++;
           }
         } catch (error: any) {
           errorCount++;
-          errors.push(`${fullName}: ${error.message}`);
+          errors.push(`${clientCode}: ${error.message}`);
         }
       }
 
