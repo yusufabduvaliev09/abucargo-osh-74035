@@ -196,6 +196,26 @@ const AdminUsers = () => {
     event.target.value = '';
   };
 
+  const handleDeleteAllUsers = async () => {
+  if (!confirm("Вы уверены, что хотите удалить всех пользователей? Это действие нельзя отменить!")) return;
+
+  const { error } = await supabase.from("profiles").delete().neq("id", 0);
+
+  if (error) {
+    toast({
+      title: "Ошибка",
+      description: "Не удалось удалить всех пользователей",
+      variant: "destructive",
+    });
+  } else {
+    toast({
+      title: "Успешно",
+      description: "Все пользователи удалены",
+    });
+    fetchUsers();
+  }
+};
+  
   const handleDeleteUser = async (userId: string) => {
     if (!confirm("Вы уверены, что хотите удалить этого пользователя?")) return;
 
@@ -305,6 +325,35 @@ const AdminUsers = () => {
           </div>
 
           <div className="flex gap-2 mb-4">
+  <Button onClick={() => setShowAddDialog(true)}>
+    <UserPlus className="h-4 w-4 mr-2" />
+    Добавить вручную
+  </Button>
+
+  <Button variant="outline" asChild>
+    <label className="cursor-pointer">
+      <Upload className="h-4 w-4 mr-2" />
+      Импорт из Excel
+      <input
+        type="file"
+        accept=".xlsx,.xls"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+    </label>
+  </Button>
+
+  {/* ✅ Новая кнопка — удалить всех пользователей */}
+  <Button
+    variant="destructive"
+    onClick={handleDeleteAllUsers}
+  >
+    <Trash2 className="h-4 w-4 mr-2" />
+    Удалить всех пользователей
+  </Button>
+</div>
+
+        <div className="flex gap-2 mb-4">
             <Input
               placeholder="Поиск по ID, имени или телефону"
               value={searchTerm}
@@ -328,7 +377,7 @@ const AdminUsers = () => {
               Поиск
             </Button>
           </div>
-
+          
           {loading ? (
             <div className="text-center py-8">Загрузка...</div>
           ) : (
