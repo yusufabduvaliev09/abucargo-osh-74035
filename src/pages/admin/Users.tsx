@@ -150,15 +150,18 @@ const AdminUsers = () => {
         }
 
         try {
-          const { data, error } = await supabase.functions.invoke('create-user', {
-            body: {
-              client_code: clientCode,
-              full_name: fullName,
-              phone: phone,
-              pvz_location: pvzLocation,
-              password: password,
-            },
-          });
+          const { data, error } = await supabase
+  .from("profiles")
+  .insert([
+    {
+      client_code: clientCode, // теперь берётся ID из Excel
+      full_name: fullName,
+      phone: phone,
+      pvz_location: pvzLocation,
+      password: password,
+      created_at: new Date().toISOString(),
+    },
+       ]);
 
           if (error || data?.error) {
             errorCount++;
