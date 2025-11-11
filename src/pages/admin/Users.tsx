@@ -364,32 +364,28 @@ const AdminUsers = () => {
                                 window.open(`https://wa.me/${cleanPhone}`, '_blank');
                               }}
                             >
-                              <MessageCircle className="h-4 w-4 mr-2" />
-                              WhatsApp
+                              <MessageCircle className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleLoginAsUser(user.user_id, user.full_name)}
                             >
-                              <UserCog className="h-4 w-4 mr-2" />
-                              Войти как пользователь
+                              <UserCog className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => setEditingUser(user)}
                             >
-                              <Edit className="h-4 w-4 mr-2" />
-                              Изменить
+                              <Edit className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="destructive"
                               size="sm"
                               onClick={() => handleDeleteUser(user.id)}
                             >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Удалить
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </TableCell>
